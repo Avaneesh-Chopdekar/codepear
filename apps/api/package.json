@@ -14,11 +14,16 @@
     "preset": "@repo/jest-presets/node"
   },
   "dependencies": {
+    "@prisma/client": "^6.15.0",
     "@repo/logger": "*",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.3",
-    "morgan": "^1.10.0"
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "prisma": "^6.15.0",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

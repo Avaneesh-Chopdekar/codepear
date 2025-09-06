@@ -9,10 +9,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@repo/ui": "*",
+    "monaco-editor": "^0.52.2",
     "next": "^14.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@repo/ui": "*"
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.1",
