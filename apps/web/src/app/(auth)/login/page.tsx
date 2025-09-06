@@ -1,6 +1,7 @@
 "use client";
 import React, { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,15 +11,33 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { API_URL } from "@/lib/constants";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log({ email, password });
+    const response = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!response.ok) {
+      toast("Something went wrong", {
+        description: "Please try again",
+      });
+      return;
+    }
+    toast("Login successful");
+    router.push("/dashboard");
   }
+
   function handleReset(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setEmail("");
