@@ -38,7 +38,7 @@ export default function LoginPage() {
       return;
     }
     const data = await response.json();
-    setUser(data);
+    setUser({ token: data.token, user: data.user });
 
     toast("Login successful");
     router.push("/dashboard");
