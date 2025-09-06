@@ -2,6 +2,9 @@
 import React, { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSetAtom } from "jotai/react";
+import { userAtom } from "@/atoms/user-atom";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,12 +15,12 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { API_URL } from "@/lib/constants";
-import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const setUser = useSetAtom(userAtom);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,6 +37,9 @@ export default function LoginPage() {
       });
       return;
     }
+    const data = await response.json();
+    setUser(data);
+
     toast("Login successful");
     router.push("/dashboard");
   }
