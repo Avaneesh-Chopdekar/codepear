@@ -1,6 +1,7 @@
 "use client";
 import React, { FormEvent, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,16 +11,37 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { API_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  const router = useRouter();
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log({ name, email, password });
+    const response = await fetch(`${API_URL}/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, password, role: "user" }),
+    });
+    if (!response.ok) {
+      toast("Something went wrong", {
+        description: "Please try again",
+      });
+      return;
+    }
+    toast("Signup successful", {
+      description: "You can now login",
+    });
+    router.push("/login");
   }
+
   function handleReset(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setName("");

@@ -53,10 +53,10 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <div className="flex gap-2 items-center">
+              <Button type="submit">Login</Button>
               <Button variant="outline" type="reset">
                 Reset
               </Button>
-              <Button type="submit">Login</Button>
             </div>
           </form>
         </CardContent>
