@@ -1,10 +1,14 @@
+"use client";
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
+  const router = useRouter();
+
   const links = [
     { href: "/", label: "Home" },
     { href: "/problems", label: "Problems" },
@@ -64,10 +68,16 @@ export default function Navbar() {
 
           {/* Auth Buttons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/login")}
+            >
               Log in
             </Button>
-            <Button size="sm">Sign up</Button>
+            <Button size="sm" onClick={() => router.push("/signup")}>
+              Sign up
+            </Button>
           </div>
         </div>
       </div>
