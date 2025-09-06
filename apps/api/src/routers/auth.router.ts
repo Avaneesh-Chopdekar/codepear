@@ -1,35 +1,52 @@
 import { Router } from "express";
-import { PrismaClient } from "../generated/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { eq } from "drizzle-orm";
+import { db } from "../db";
+import { users } from "../db/schema";
 
-const prisma = new PrismaClient();
 const router = Router();
 
 router.post("/register", async (req, res) => {
   const { email, password, name, role } = req.body;
 
-  const hashed = await bcrypt.hash(password, 10);
+  try {
+    const user = await db.select().from(users).where(eq(users.email, email));
+    if (user.length > 0) {
+      return res.json({ success: false, message: "User already exists" });
+    }
 
-  const user = await prisma.user.create({
-    data: { email, password: hashed, name, role },
-    omit: { password: true },
-  });
+    const hashed = await bcrypt.hash(password, 10);
 
-  res.json(user);
+    await db.insert(users).values({
+      email,
+      password: hashed,
+      name,
+      role,
+    });
+
+    return res.json({ success: true, message: "User created successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false, message: "Something went wrong" });
+  }
 });
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return res.status(401).json({ error: "Invalid credentials" });
+  const [user] = await db.select().from(users).where(eq(users.email, email));
+  if (!user) {
+    return res.json({ success: false, message: "Invalid credentials" });
+  }
 
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user.id }, "SECRET", { expiresIn: "30d" });
-  res.json({ token, user });
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+    expiresIn: "30d",
+  });
+  return res.json({ token, user });
 });
 
 export default router;

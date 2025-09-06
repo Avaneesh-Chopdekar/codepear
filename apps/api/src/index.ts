@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
 import http from "http";
 import express from "express";
 import { Server } from "socket.io";
 import cors from "cors";
+
+dotenv.config();
 
 import { createApp } from "./app";
 import authRouter from "./routers/auth.router";
