@@ -1,8 +1,11 @@
-import express from "express";
 import http from "http";
+import express from "express";
 import { Server } from "socket.io";
 import cors from "cors";
+
 import { createApp } from "./app";
+import authRouter from "./routers/auth.router";
+import sessionRouter from "./routers/session.router";
 
 const port = process.env.PORT || 3001;
 const app = createApp();
@@ -13,7 +16,9 @@ const io = new Server(server, { cors: { origin: "*" } });
 app.use(cors());
 app.use(express.json());
 
-app.get("/health-check", (req, res) =>
+app.use("/api/auth", authRouter);
+app.use("/api/sessions", sessionRouter);
+app.get("/api/health-check", (req, res) =>
   res.status(200).json({ status: "healthy" })
 );
 

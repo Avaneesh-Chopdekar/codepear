@@ -10,9 +10,6 @@
     "start": "node -r esbuild-register ./src/index.ts",
     "test": "jest --detectOpenHandles"
   },
-  "jest": {
-    "preset": "@repo/jest-presets/node"
-  },
   "dependencies": {
     "@prisma/client": "^6.15.0",
     "@repo/logger": "*",
@@ -30,9 +27,11 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/jest-presets": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/bcrypt": "^6.0.0",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.24",
     "@types/supertest": "^6.0.2",
