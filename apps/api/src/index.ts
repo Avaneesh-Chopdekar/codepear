@@ -9,6 +9,7 @@ dotenv.config();
 import { createApp } from "./app";
 import authRouter from "./routers/auth.router";
 import sessionRouter from "./routers/session.router";
+import problemRouter from "./routers/problem.router";
 
 const port = process.env.PORT || 3001;
 const app = createApp();
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/sessions", sessionRouter);
+app.use("/api/problems", problemRouter);
 app.get("/api/health-check", (req, res) =>
   res.status(200).json({ status: "healthy" })
 );
