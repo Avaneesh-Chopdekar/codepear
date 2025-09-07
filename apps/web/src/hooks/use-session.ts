@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import type { Problem, Session } from "@/lib/types";
+import { API_URL } from "@/lib/constants";
+import type { Message, Problem, Session } from "@/lib/types";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL);
+const socket = io(API_URL);
 
 export function useSession(sessionId: string) {
   const [code, setCode] = useState("console.log('Hello World!');");
   const [session, setSession] = useState<Session>({} as Session);
   const [problem, setProblem] = useState<Problem>({} as Problem);
+  const [chat, setChat] = useState<Message[]>([]);
 
   async function getProblemInfo(problemId: string) {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/problems/${problemId}`
-      );
+      const res = await fetch(`${API_URL}/api/problems/${problemId}`);
       const json = await res.json();
       setProblem(json.problem);
     } catch (error) {
@@ -23,9 +23,7 @@ export function useSession(sessionId: string) {
 
   async function getSessionInfo(sessionId: string) {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/sessions/${sessionId}`
-      );
+      const res = await fetch(`${API_URL}/api/sessions/${sessionId}`);
       const json = await res.json();
       setSession(json);
       getProblemInfo(json.session.problemId);
@@ -39,8 +37,11 @@ export function useSession(sessionId: string) {
     getSessionInfo(sessionId);
 
     socket.on("code:update", ({ code }) => setCode(code));
+    socket.on("chat:new", (msg) => setChat((prev) => [...prev, msg]));
+
     return () => {
       socket.off("code:update");
+      socket.off("chat:new");
     };
   }, [sessionId]);
 
@@ -49,5 +50,9 @@ export function useSession(sessionId: string) {
     socket.emit("code:change", { sessionId, code: newCode });
   }
 
-  return { code, updateCode, session, problem };
+  function sendMessage(sender: string, content: string) {
+    socket.emit("chat:message", { sessionId, sender, content });
+  }
+
+  return { code, updateCode, session, problem, chat, sendMessage };
 }

@@ -31,6 +31,7 @@ export type Message = {
   id: string;
   sessionId: string;
   senderId: string;
+  sender?: string;
   content: string;
   createdAt?: string;
 };

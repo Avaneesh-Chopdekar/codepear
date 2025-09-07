@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
@@ -8,6 +8,7 @@ import useAuth from "@/hooks/use-auth";
 import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 
 //* Demo Session Page: /sessions/ky1zsz
 
@@ -16,11 +17,13 @@ export default function SessionPage() {
   const router = useRouter();
   const auth = useAuth();
 
-  const { code, updateCode, session, problem } = useSession(
+  const { code, updateCode, problem, chat, sendMessage } = useSession(
     sessionId as string
   );
   const [language, setLanguage] = useState("javascript");
   const [output, setOutput] = useState("");
+  const [chatInput, setChatInput] = useState("");
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
@@ -32,6 +35,17 @@ export default function SessionPage() {
       router.push("/login");
     }
   }, [hydrated, auth, router]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat]);
+
+  function handleSendChat(e: React.FormEvent) {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    sendMessage(auth.user.name, chatInput.trim());
+    setChatInput("");
+  }
 
   function handleExit() {
     if (!window.confirm("Leave this session?")) return;
@@ -86,7 +100,7 @@ export default function SessionPage() {
         </div>
       </div>
 
-      <div className="w-full h-full flex">
+      <div className="w-full h-[calc(100vh-116px)] flex">
         <div className="flex-1 flex flex-col">
           <div className="flex-2">
             <Editor
@@ -119,12 +133,37 @@ export default function SessionPage() {
             </pre>
             <pre>{problem.examples}</pre>
           </TabsContent>
-          <TabsContent value="video-call">
+          <TabsContent value="video-call" className="flex flex-col">
             <div>
               <div>Interviewer</div>
               <div>Candidate</div>
             </div>
-            <div>Chat</div>
+            <div className="flex flex-col flex-1 border-t">
+              <div className="flex-1 overflow-y-auto px-4 pb-2">
+                {chat.map((msg, idx) => (
+                  <div key={idx} className="mb-2">
+                    <span className="font-semibold">{msg.sender}:</span>{" "}
+                    <span>{msg.content}</span>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+              <form
+                onSubmit={handleSendChat}
+                className="flex gap-2 p-4 border-t"
+              >
+                <Input
+                  className="flex-1"
+                  placeholder="Type a message..."
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  autoComplete="off"
+                />
+                <Button type="submit" size="sm">
+                  Send
+                </Button>
+              </form>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
