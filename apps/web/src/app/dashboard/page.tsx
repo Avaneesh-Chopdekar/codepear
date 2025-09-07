@@ -5,6 +5,8 @@ import useAuth from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { API_URL } from "@/lib/constants";
 
 export default function DashboardPage() {
   const data = useAuth();
@@ -31,7 +33,7 @@ export default function DashboardPage() {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("/api/session", {
+      const res = await fetch(`${API_URL}/api/sessions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -42,6 +44,9 @@ export default function DashboardPage() {
       const json = await res.json();
       if (json.success) {
         setMessage(`Session created! Room code: ${json.session.roomCode}`);
+        setTimeout(() => {
+          router.push(`/sessions/${json.session.roomCode}`);
+        }, 1000);
       } else {
         setMessage(json.message || "Failed to create session");
       }
@@ -55,7 +60,7 @@ export default function DashboardPage() {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("/api/session/join", {
+      const res = await fetch("/api/sessions/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,6 +83,20 @@ export default function DashboardPage() {
   return (
     <main className="container mx-auto">
       <h1 className="text-2xl sm:text-3xl font-bold px-8 py-4">Dashboard</h1>
+      {message ? (
+        <div className="flex items-center mb-4">
+          <Alert
+            className="flex-1 w-full mx-8 border-destructive"
+            variant={
+              message.includes("Error") || message.includes("Failed")
+                ? "destructive"
+                : "default"
+            }
+          >
+            <AlertTitle>{message}</AlertTitle>
+          </Alert>
+        </div>
+      ) : null}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-8 px-8">
         <Card className="flex-1 w-full sm:w-auto">
           <CardHeader>Create Session</CardHeader>
@@ -110,9 +129,6 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
-        {message && (
-          <div className="text-center text-sm text-primary mt-4">{message}</div>
-        )}
       </div>
     </main>
   );
