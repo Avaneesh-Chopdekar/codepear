@@ -121,7 +121,7 @@ export default function SessionPage() {
     <main className="h-[calc(100vh-64px)] w-full overflow-y-hidden">
       <div className="flex justify-between items-center border-b py-2 px-8">
         <h1>
-          Session:{" "}
+          Room Code:{" "}
           <Button variant={"link"} onClick={handleCopySessionId}>
             {sessionId}
           </Button>
