@@ -6,6 +6,8 @@ import { relations } from "drizzle-orm";
 //* 1. Add createdBy field for Session and Problem
 //* 2. Add requestedAt and requestedBy field for Session
 //* 3. Add status (approved/rejected/pending), requestedAt and requestedBy field for Problem for Admin to approve
+//* 4. Add starterCode field for Problem (include language)
+//* 5. Add language field for Submission
 
 // ---------- User ----------
 export const users = pgTable("users", {
