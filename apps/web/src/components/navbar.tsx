@@ -79,36 +79,36 @@ export default function Navbar() {
               </Link>
             ))}
           </nav>
-
-          {/* Auth Buttons */}
-          {auth.isAuthenticated ? (
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="link"
-                size="sm"
-                onClick={() => router.push("/profile")}
-              >
-                {auth.user.name}
-              </Button>
-              <Button size="sm" onClick={handleLogout}>
-                Logout
-              </Button>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push("/login")}
-              >
-                Log in
-              </Button>
-              <Button size="sm" onClick={() => router.push("/signup")}>
-                Sign up
-              </Button>
-            </div>
-          )}
         </div>
+
+        {/* Auth Buttons */}
+        {auth.isAuthenticated ? (
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => router.push("/profile")}
+            >
+              {auth.user.name}
+            </Button>
+            <Button size="sm" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/login")}
+            >
+              Log in
+            </Button>
+            <Button size="sm" onClick={() => router.push("/signup")}>
+              Sign up
+            </Button>
+          </div>
+        )}
       </div>
     </nav>
   );
