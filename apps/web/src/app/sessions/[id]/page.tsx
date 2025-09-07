@@ -5,10 +5,9 @@ import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
 
 import useAuth from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/use-session";
-import { API_URL } from "@/lib/constants";
-import { Problem } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 //* Demo Session Page: /sessions/ky1zsz
 
@@ -106,17 +105,28 @@ export default function SessionPage() {
             <pre>{output}</pre>
           </div>
         </div>
-        <div id="tabs" className="flex-1 border-l">
-          <div className="p-8 space-y-4">
+        <Tabs defaultValue="statement" className="flex-1 border-l">
+          <div className="p-4">
+            <TabsList className="">
+              <TabsTrigger value="statement">Problem</TabsTrigger>
+              <TabsTrigger value="video-call">Video Call</TabsTrigger>
+            </TabsList>
+          </div>
+          <TabsContent value="statement" className="px-8 pb-4 space-y-4">
             <h2 className="font-semibold text-2xl">{problem.title}</h2>
             <pre className="whitespace-pre-wrap font-sans">
               {problem.statement}
             </pre>
-
             <pre>{problem.examples}</pre>
-          </div>
-          {/* <div>Video Call and Chat</div> */}
-        </div>
+          </TabsContent>
+          <TabsContent value="video-call">
+            <div>
+              <div>Interviewer</div>
+              <div>Candidate</div>
+            </div>
+            <div>Chat</div>
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );
