@@ -2,6 +2,11 @@ import crypto from "node:crypto";
 import { pgTable, varchar, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+// TODOs for Next Migration
+//* 1. Add createdBy field for Session and Problem
+//* 2. Add requestedAt and requestedBy field for Session
+//* 3. Add status (approved/rejected/pending), requestedAt and requestedBy field for Problem for Admin to approve
+
 // ---------- User ----------
 export const users = pgTable("users", {
   id: varchar("id", { length: 255 })
