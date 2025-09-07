@@ -17,6 +17,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.1.13",
+    "@types/simple-peer": "^9.11.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jotai": "^2.13.1",

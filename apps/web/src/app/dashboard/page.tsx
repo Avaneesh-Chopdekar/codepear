@@ -60,7 +60,7 @@ export default function DashboardPage() {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("/api/sessions/join", {
+      const res = await fetch(`${API_URL}/api/sessions/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -70,7 +70,10 @@ export default function DashboardPage() {
       });
       const json = await res.json();
       if (json.success) {
-        setMessage("Joined session!");
+        setMessage(`Joined session! Room code: ${json.session.roomCode}`);
+        setTimeout(() => {
+          router.push(`/sessions/${roomCode}`);
+        }, 1000);
       } else {
         setMessage(json.message || "Failed to join session");
       }

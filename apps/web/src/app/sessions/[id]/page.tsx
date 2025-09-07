@@ -17,13 +17,49 @@ export default function SessionPage() {
   const router = useRouter();
   const auth = useAuth();
 
-  const { code, updateCode, problem, chat, sendMessage } = useSession(
-    sessionId as string
-  );
+  const {
+    code,
+    updateCode,
+    problem,
+    chat,
+    sendMessage,
+    remoteStream,
+    startCall,
+    getLocalStream,
+  } = useSession(sessionId as string, auth.user.id);
   const [language, setLanguage] = useState("javascript");
   const [output, setOutput] = useState("");
   const [chatInput, setChatInput] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (localVideoRef.current && localStream) {
+      localVideoRef.current.srcObject = localStream;
+    }
+  }, [localStream]);
+
+  useEffect(() => {
+    if (remoteVideoRef.current && remoteStream) {
+      remoteVideoRef.current.srcObject = remoteStream;
+    }
+  }, [remoteStream]);
+
+  async function handleStartCall() {
+    const stream = await startCall();
+    setLocalStream(stream);
+  }
+
+  async function handleGetLocalStream() {
+    const stream = await getLocalStream();
+    setLocalStream(stream);
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = stream;
+    }
+  }
 
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
@@ -124,6 +160,7 @@ export default function SessionPage() {
             <TabsList className="">
               <TabsTrigger value="statement">Problem</TabsTrigger>
               <TabsTrigger value="video-call">Video Call</TabsTrigger>
+              <TabsTrigger value="messaging">Messaging</TabsTrigger>
             </TabsList>
           </div>
           <TabsContent value="statement" className="px-8 pb-4 space-y-4">
@@ -133,12 +170,41 @@ export default function SessionPage() {
             </pre>
             <pre>{problem.examples}</pre>
           </TabsContent>
-          <TabsContent value="video-call" className="flex flex-col">
-            <div>
-              <div>Interviewer</div>
-              <div>Candidate</div>
+          <TabsContent value="video-call" className="px-4">
+            <div className="flex gap-4 p-4">
+              <div>
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="w-48 h-36 bg-black rounded"
+                />
+                <Button
+                  size="sm"
+                  onClick={handleGetLocalStream}
+                  className="my-4"
+                  variant={"outline"}
+                >
+                  Enable Camera
+                </Button>
+                <br />
+                <Button size="sm" onClick={handleStartCall}>
+                  Start Call
+                </Button>
+              </div>
+              <div>
+                <video
+                  ref={remoteVideoRef}
+                  autoPlay
+                  playsInline
+                  className="w-48 h-36 bg-black rounded"
+                />
+              </div>
             </div>
-            <div className="flex flex-col flex-1 border-t">
+          </TabsContent>
+          <TabsContent value="messaging" className="px-4">
+            <div className="flex flex-col h-full">
               <div className="flex-1 overflow-y-auto px-4 pb-2">
                 {chat.map((msg, idx) => (
                   <div key={idx} className="mb-2">
