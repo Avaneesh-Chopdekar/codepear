@@ -8,28 +8,42 @@ const router = Router();
 router.post("/", async (req, res) => {
   const { interviewerId, problemId } = req.body;
 
-  const [session] = await db
-    .insert(sessions)
-    .values({
-      interviewerId,
-      problemId,
-      roomCode: Math.random().toString(36).substring(2, 8),
-    })
-    .returning();
+  try {
+    const [session] = await db
+      .insert(sessions)
+      .values({
+        interviewerId,
+        problemId,
+        roomCode: Math.random().toString(36).substring(2, 8),
+      })
+      .returning();
 
-  return res.json(session);
+    return res.json({ success: true, message: "Session created", session });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
 });
 
 router.post("/join", async (req, res) => {
-  const { sessionId, candidateId } = req.body;
+  const { roomCode, candidateId } = req.body;
 
-  const updated = await db
-    .update(sessions)
-    .set({ candidateId })
-    .where(eq(sessions.id, sessionId))
-    .returning();
+  try {
+    const [session] = await db
+      .update(sessions)
+      .set({ candidateId })
+      .where(eq(sessions.roomCode, roomCode))
+      .returning();
 
-  return res.json(updated);
+    return res.json({ success: true, message: "Session joined", session });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
 });
 
 export default router;
