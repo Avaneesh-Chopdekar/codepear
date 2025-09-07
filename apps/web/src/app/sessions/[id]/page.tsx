@@ -14,7 +14,9 @@ export default function SessionPage() {
   const router = useRouter();
   const auth = useAuth();
 
-  const [code, setCode] = useState("");
+  const [language, setLanguage] = useState("javascript");
+  const [code, setCode] = useState("console.log('hello world');");
+  const [output, setOutput] = useState("");
 
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
@@ -28,6 +30,7 @@ export default function SessionPage() {
   }, [hydrated, auth, router]);
 
   function handleExit() {
+    if (!window.confirm("Leave this session?")) return;
     router.push("/dashboard");
   }
 
@@ -36,6 +39,28 @@ export default function SessionPage() {
       `${window.location.origin}/sessions/${sessionId}`
     );
     toast("Link copied to clipboard");
+  }
+
+  async function handleRunCode() {
+    console.log(code);
+    try {
+      const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          language,
+          version: "18.15.0",
+          files: [{ content: code }],
+        }),
+      });
+
+      const json = await response.json();
+      setOutput(json.run.output);
+    } catch (error) {
+      setOutput("Error running code");
+    }
   }
 
   return (
@@ -47,28 +72,36 @@ export default function SessionPage() {
             {sessionId}
           </Button>
         </h1>
-        {/* TODO: Add timer */}
-        <Button variant="destructive" onClick={handleExit}>
-          Exit
-        </Button>
+
+        <div className="space-x-4">
+          {/* TODO: Add timer */}
+          <Button onClick={handleRunCode}>Run Code</Button>
+          <Button variant="destructive" onClick={handleExit}>
+            Exit
+          </Button>
+        </div>
       </div>
 
       <div className="w-full h-full flex">
-        <div className="flex-1">
-          <Editor
-            defaultLanguage="javascript"
-            defaultValue="console.log('hello world');"
-            value={code}
-            onChange={(value) => setCode(value || "")}
-            options={{
-              automaticLayout: true,
-              minimap: {
-                enabled: false,
-              },
-            }}
-          />
+        <div className="flex-1 flex flex-col">
+          <div className="flex-2">
+            <Editor
+              language={language}
+              value={code}
+              onChange={(value) => setCode(value || "")}
+              options={{
+                automaticLayout: true,
+                minimap: {
+                  enabled: false,
+                },
+              }}
+            />
+          </div>
+          <div className="border-t flex-1 px-8 overflow-y-auto">
+            <pre>{output}</pre>
+          </div>
         </div>
-        <div id="tabs" className="flex-1">
+        <div id="tabs" className="flex-1 border-l">
           <div>Problem Description</div>
           <div>Video Call and Chat</div>
         </div>
