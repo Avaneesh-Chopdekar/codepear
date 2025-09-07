@@ -19,6 +19,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
 export default function ProblemsPage() {
   const { user } = useAuth();
@@ -33,6 +34,20 @@ export default function ProblemsPage() {
   const [examples, setExamples] = useState("");
   const [solution, setSolution] = useState("");
   const [creating, setCreating] = useState(false);
+
+  const router = useRouter();
+  const auth = useAuth();
+
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated && !auth.isAuthenticated) {
+      router.push("/login");
+    }
+  }, [hydrated, auth, router]);
 
   useEffect(() => {
     async function fetchProblems() {
