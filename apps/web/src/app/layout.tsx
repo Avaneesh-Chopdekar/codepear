@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
+import { Provider } from "jotai";
 
 export const metadata: Metadata = {
   title: "CodePear - Pair Programming and Coding Interview",
@@ -16,9 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {children}
-        <Toaster />
+        <Provider>
+          <Navbar />
+          {children}
+          <Toaster />
+        </Provider>
       </body>
     </html>
   );
