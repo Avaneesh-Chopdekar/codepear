@@ -21,6 +21,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [data] = await db.select().from(problems).where(eq(problems.id, id));
+    return res.json({
+      success: true,
+      message: "Problem fetched successfully",
+      problem: data,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
+
 router.post("/", async (req, res) => {
   const { title, statement, examples, solution } = req.body;
 

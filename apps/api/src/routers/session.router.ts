@@ -27,6 +27,22 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const data = await db.select().from(sessions);
+    return res.json({
+      success: true,
+      message: "Sessions fetched successfully",
+      sessions: data,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
+
 router.post("/join", async (req, res) => {
   const { roomCode, candidateId } = req.body;
 
@@ -38,6 +54,33 @@ router.post("/join", async (req, res) => {
       .returning();
 
     return res.json({ success: true, message: "Session joined", session });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
+
+router.get("/:roomCode", async (req, res) => {
+  const { roomCode } = req.params;
+
+  if (!roomCode) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing required fields" });
+  }
+
+  try {
+    const [data] = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.roomCode, roomCode));
+    return res.json({
+      success: true,
+      message: "Session fetched successfully",
+      session: data,
+    });
   } catch (error) {
     console.log(error);
     return res

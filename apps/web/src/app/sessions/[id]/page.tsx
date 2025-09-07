@@ -6,6 +6,9 @@ import Editor from "@monaco-editor/react";
 
 import useAuth from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/hooks/use-session";
+import { API_URL } from "@/lib/constants";
+import { Problem } from "@/lib/types";
 
 //* Demo Session Page: /sessions/ky1zsz
 
@@ -14,8 +17,10 @@ export default function SessionPage() {
   const router = useRouter();
   const auth = useAuth();
 
+  const { code, updateCode, session, problem } = useSession(
+    sessionId as string
+  );
   const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState("console.log('hello world');");
   const [output, setOutput] = useState("");
 
   const [hydrated, setHydrated] = useState(false);
@@ -88,7 +93,7 @@ export default function SessionPage() {
             <Editor
               language={language}
               value={code}
-              onChange={(value) => setCode(value || "")}
+              onChange={(value) => updateCode(value || "")}
               options={{
                 automaticLayout: true,
                 minimap: {
@@ -102,8 +107,15 @@ export default function SessionPage() {
           </div>
         </div>
         <div id="tabs" className="flex-1 border-l">
-          <div>Problem Description</div>
-          <div>Video Call and Chat</div>
+          <div className="p-8 space-y-4">
+            <h2 className="font-semibold text-2xl">{problem.title}</h2>
+            <pre className="whitespace-pre-wrap font-sans">
+              {problem.statement}
+            </pre>
+
+            <pre>{problem.examples}</pre>
+          </div>
+          {/* <div>Video Call and Chat</div> */}
         </div>
       </div>
     </main>
