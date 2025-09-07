@@ -1,75 +1,181 @@
-# Turborepo Docker starter
+# CodePear
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+CodePear is a full-stack collaborative coding interview platform built with Turborepo, Next.js, Express, Drizzle ORM, shadcn/ui, and Socket.io. It features real-time code editing, video calls, chat, problem management, and role-based access.
 
-## Using this example
+---
 
-Run the following command:
+## Features
+
+- **Collaborative Coding:** Real-time code editor powered by Monaco and Socket.io.
+- **Video Calls:** Peer-to-peer video chat using WebRTC (simple-peer).
+- **Live Chat:** Real-time messaging in sessions.
+- **Problem Management:** Admins can create, delete, and manage coding problems.
+- **Role-Based Access:** User and admin roles with protected routes.
+- **Session Management:** Interviewer/candidate sessions with join codes.
+- **Modern UI:** Built with shadcn/ui and Tailwind CSS.
+- **Monorepo:** Managed with Turborepo for scalable development.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [Bun](https://bun.sh/) or [Yarn](https://yarnpkg.com/)
+- [Docker](https://www.docker.com/) (optional, for containerization)
+- [PostgreSQL](https://www.postgresql.org/) (local or cloud)
+
+### 1. Clone the repository
 
 ```sh
-npx create-turbo@latest -e with-docker
+git clone https://github.com/Avaneesh-Chopdekar/codepear.git
+cd codepear
 ```
 
-## What's inside?
+### 2. Install dependencies
 
-This Turborepo includes the following:
-
-### Apps and Packages
-
-- `web`: a [Next.js](https://nextjs.org/) app
-- `api`: an [Express](https://expressjs.com/) server
-- `@repo/ui`: a React component library
-- `@repo/logger`: Isomorphic logger (a small wrapper around console.log)
-- `@repo/eslint-config`: ESLint presets
-- `@repo/typescript-config`: tsconfig.json's used throughout the monorepo
-- `@repo/jest-presets`: Jest configurations
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Docker
-
-This repo is configured to be built with Docker, and Docker compose. To build all apps in this repo:
-
-```
-# Install dependencies
+```sh
+bun install
+# or
 yarn install
+```
 
-# Create a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
+### 3. Configure environment variables
+
+Create `.env.local` files in `apps/web` and `apps/api`:
+
+**apps/web/.env.local**
+
+```
+NEXT_PUBLIC_API_URL="http://localhost:3001"
+```
+
+**apps/api/.env**
+
+```
+DATABASE_URL="postgres://user:password@localhost:5432/codepear"
+JWT_SECRET="your_jwt_secret"
+```
+
+### 4. Setup the database
+
+Run migrations and generate ORM clients:
+
+```sh
+bunx drizzle-kit generate:pg
+bunx drizzle-kit push:pg
+```
+
+### 5. Start the development servers
+
+**API server:**
+
+```sh
+bun run dev --cwd apps/api
+# or
+yarn workspace api dev
+```
+
+**Web app:**
+
+```sh
+bun run dev --cwd apps/web
+# or
+yarn workspace web dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## Docker Setup
+
+To run everything in Docker:
+
+```sh
+# Build and start containers
 docker network create app_network
-
-# Build prod using new BuildKit engine
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build
-
-# Start prod in detached mode
 docker-compose -f docker-compose.yml up -d
+
+# Stop containers
+docker-compose -f docker-compose.yml down
 ```
 
-Open http://localhost:3000.
+---
 
-To shutdown all running containers:
+## Project Structure
 
 ```
-# Stop running containers started by docker-compse
- docker-compose -f docker-compose.yml down
+apps/
+  web/      # Next.js frontend
+  api/      # Express backend
+packages/
+  ui/       # Shared React components
+  logger/   # Shared logger
+  typescript-config/
+  jest-presets/
+  eslint-config/
 ```
 
-### Remote Caching
+---
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Remote Caching
 
-This example includes optional remote caching. In the Dockerfiles of the apps, uncomment the build arguments for `TURBO_TEAM` and `TURBO_TOKEN`. Then, pass these build arguments to your Docker build.
+You can enable Vercel Remote Cache for faster builds. See [Vercel docs](https://vercel.com/docs/remote-cache) for setup.
 
-You can test this behavior using a command like:
+---
 
-`docker build -f apps/web/Dockerfile . --build-arg TURBO_TEAM=“your-team-name” --build-arg TURBO_TOKEN=“your-token“ --no-cache`
+## Utilities
 
-### Utilities
+- **TypeScript** for static type checking
+- **ESLint** for code linting
+- **Jest** for testing
+- **Prettier** for code formatting
 
-This Turborepo has some additional tools already setup for you:
+---
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Jest](https://jestjs.io) test runner for all things JavaScript
-- [Prettier](https://prettier.io) for code formatting
+## Contributing
+
+Pull requests are welcome! Please open an issue first for major changes.
+
+---
+
+## TODOS
+
+[WEB]
+
+- Add unit and integration tests
+- Improve error handling and validation
+- Add user profile and settings
+- Enhance session analytics and reporting
+- Add dark mode
+- Integrate with GitHub OAuth
+- Integrate Sentry for error tracking
+
+[API]
+
+- Add pagination and filtering for sessions and problems
+- Refresh tokens for user sessions
+- Add authentication and authorization for API routes
+- Add OpenAPI Swagger docs
+- Implement rate limiting for API requests
+- Add caching for API responses
+
+[FINISHING STEPS]
+
+- Create demo video
+- Deploy to Vercel
+
+---
+
+## License
+
+[MIT LICENSE](./LICENSE)
+
+---
+
+## Demo
+
+Coming soon!
