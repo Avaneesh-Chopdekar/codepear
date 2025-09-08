@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "next-themes";
+import { LogOutIcon, PlayIcon } from "lucide-react";
 
 //* Demo Session Page: /sessions/ky1zsz
 
@@ -123,7 +124,7 @@ export default function SessionPage() {
   }
 
   return (
-    <main className="h-[calc(100vh-64px)] w-full overflow-y-hidden">
+    <main className="h-[calc(100vh-65px)] w-full overflow-y-hidden">
       <div className="flex justify-between items-center border-b py-2 px-8">
         <h1>
           Room Code:{" "}
@@ -134,9 +135,11 @@ export default function SessionPage() {
 
         <div className="space-x-4">
           {/* TODO: Add timer */}
-          <Button onClick={handleRunCode}>Run Code</Button>
+          <Button onClick={handleRunCode}>
+            <PlayIcon /> Run Code
+          </Button>
           <Button variant="destructive" onClick={handleExit}>
-            Exit
+            <LogOutIcon /> Exit
           </Button>
         </div>
       </div>
