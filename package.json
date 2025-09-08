@@ -1,16 +1,6 @@
 {
   "name": "with-docker",
   "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "clean": "turbo run clean",
-    "dev": "turbo run dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint",
-    "test": "turbo run test"
-  },
-  "dependencies": {},
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.5.6"
@@ -20,6 +10,15 @@
     "npm": ">=7.0.0"
   },
   "packageManager": "bun@1.2.18",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"

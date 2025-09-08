@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { API_URL } from "@/lib/constants";
 import { useSetAtom } from "jotai";
 import { userAtom } from "@/atoms/user-atom";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useAuth();
@@ -58,7 +59,10 @@ export default function ProfilePage() {
 
   return (
     <main className="max-w-xl mx-auto py-12">
-      <h1 className="text-3xl font-bold mb-8">Profile</h1>
+      <div className="flex justify-between">
+        <h1 className="text-3xl font-bold mb-8">Profile</h1>
+        <ModeToggle />
+      </div>
       <Card>
         <CardHeader>
           <div className="flex items-center gap-4">

@@ -148,7 +148,6 @@ Pull requests are welcome! Please open an issue first for major changes.
 
 - Add unit and integration tests
 - Improve error handling and validation
-- Add user profile and settings
 - Enhance session analytics and reporting
 - Add dark mode
 - Integrate with GitHub OAuth
