@@ -91,7 +91,7 @@ export default function Navbar() {
             >
               {auth.user.name}
             </Button>
-            <Button size="sm" onClick={handleLogout}>
+            <Button size="sm" onClick={handleLogout} variant="outline">
               Logout
             </Button>
           </div>
