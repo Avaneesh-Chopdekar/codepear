@@ -59,10 +59,8 @@ export default function ProfilePage() {
 
   return (
     <main className="max-w-xl mx-auto py-12">
-      <div className="flex justify-between">
-        <h1 className="text-3xl font-bold mb-8">Profile</h1>
-        <ModeToggle />
-      </div>
+      <h1 className="text-3xl font-bold mb-8">Profile</h1>
+
       <Card>
         <CardHeader>
           <div className="flex items-center gap-4">

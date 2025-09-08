@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/use-auth";
 import { userAtom } from "@/atoms/user-atom";
+import { ModeToggle } from "./mode-toggle";
 
 export default function Navbar() {
   const router = useRouter();
@@ -83,13 +84,14 @@ export default function Navbar() {
 
         {/* Auth Buttons */}
         {auth.isAuthenticated ? (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
+            <ModeToggle />
             <Button
               variant="link"
               size="sm"
               onClick={() => router.push("/profile")}
             >
-              {auth.user.name}
+              Profile
             </Button>
             <Button size="sm" onClick={handleLogout} variant="outline">
               Logout

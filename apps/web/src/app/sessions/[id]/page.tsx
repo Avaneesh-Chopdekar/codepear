@@ -9,6 +9,7 @@ import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { useTheme } from "next-themes";
 
 //* Demo Session Page: /sessions/ky1zsz
 
@@ -31,6 +32,10 @@ export default function SessionPage() {
   const [output, setOutput] = useState("");
   const [chatInput, setChatInput] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const { systemTheme, theme } = useTheme();
+  let currentTheme = theme === "system" ? systemTheme : theme;
+
+  if (currentTheme === "dark") currentTheme = "vs-dark";
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -140,6 +145,7 @@ export default function SessionPage() {
         <div className="flex-1 flex flex-col">
           <div className="flex-2">
             <Editor
+              theme={currentTheme}
               language={language}
               value={code}
               onChange={(value) => updateCode(value || "")}
