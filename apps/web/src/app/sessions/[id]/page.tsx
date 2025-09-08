@@ -32,7 +32,9 @@ export default function SessionPage() {
   const [language, setLanguage] = useState("javascript");
   const [output, setOutput] = useState("");
   const [chatInput, setChatInput] = useState("");
+  const [executing, setExecuting] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
   const { systemTheme, theme } = useTheme();
   let currentTheme = theme === "system" ? systemTheme : theme;
 
@@ -102,7 +104,9 @@ export default function SessionPage() {
   }
 
   async function handleRunCode() {
-    console.log(code);
+    // console.log(code);
+    setExecuting(true);
+    toast("Executing code...");
     try {
       const response = await fetch("https://emkc.org/api/v2/piston/execute", {
         method: "POST",
@@ -120,6 +124,9 @@ export default function SessionPage() {
       setOutput(json.run.output);
     } catch (error) {
       setOutput("Error running code");
+    } finally {
+      toast("Code executed successfully");
+      setExecuting(false);
     }
   }
 
@@ -135,7 +142,7 @@ export default function SessionPage() {
 
         <div className="space-x-4">
           {/* TODO: Add timer */}
-          <Button onClick={handleRunCode}>
+          <Button onClick={handleRunCode} disabled={executing}>
             <PlayIcon /> Run Code
           </Button>
           <Button variant="destructive" onClick={handleExit}>
