@@ -3,14 +3,18 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
+import { useTheme } from "next-themes";
+import { BrushIcon, CodeIcon, LogOutIcon, PlayIcon } from "lucide-react";
+import { Tldraw } from "tldraw";
+import { useSyncDemo } from "@tldraw/sync";
+import "tldraw/tldraw.css";
 
 import useAuth from "@/hooks/use-auth";
 import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { useTheme } from "next-themes";
-import { LogOutIcon, PlayIcon } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 //* Demo Session Page: /sessions/ky1zsz
 
@@ -33,6 +37,7 @@ export default function SessionPage() {
   const [output, setOutput] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [executing, setExecuting] = useState(false);
+  const [view, setView] = useState<"code" | "board">("code");
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const { systemTheme, theme } = useTheme();
@@ -43,6 +48,8 @@ export default function SessionPage() {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+  const store = useSyncDemo({ roomId: sessionId.toString() });
 
   useEffect(() => {
     if (localVideoRef.current && localStream) {
@@ -125,7 +132,7 @@ export default function SessionPage() {
     } catch (error) {
       setOutput("Error running code");
     } finally {
-      toast("Code executed successfully");
+      toast.success("Code executed successfully");
       setExecuting(false);
     }
   }
@@ -133,12 +140,24 @@ export default function SessionPage() {
   return (
     <main className="h-[calc(100vh-65px)] w-full overflow-y-hidden">
       <div className="flex justify-between items-center border-b py-2 px-8">
-        <h1>
+        <div className="flex items-center">
           Room Code:{" "}
           <Button variant={"link"} onClick={handleCopySessionId}>
             {sessionId}
           </Button>
-        </h1>
+          <ToggleGroup
+            type="single"
+            className="ml-4"
+            onValueChange={(value) => setView(value as "code" | "board")}
+          >
+            <ToggleGroupItem value="code" aria-label="Toggle Code">
+              <CodeIcon className="h-5 w-5" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="board" aria-label="Toggle Board">
+              <BrushIcon className="h-5 w-5" />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
 
         <div className="space-x-4">
           {/* TODO: Add timer */}
@@ -152,25 +171,31 @@ export default function SessionPage() {
       </div>
 
       <div className="w-full h-[calc(100vh-116px)] flex">
-        <div className="flex-1 flex flex-col">
-          <div className="flex-2">
-            <Editor
-              theme={currentTheme}
-              language={language}
-              value={code}
-              onChange={(value) => updateCode(value || "")}
-              options={{
-                automaticLayout: true,
-                minimap: {
-                  enabled: false,
-                },
-              }}
-            />
+        {view === "code" ? (
+          <div className="flex-1 flex flex-col">
+            <div className="flex-2">
+              <Editor
+                theme={currentTheme}
+                language={language}
+                value={code}
+                onChange={(value) => updateCode(value || "")}
+                options={{
+                  automaticLayout: true,
+                  minimap: {
+                    enabled: false,
+                  },
+                }}
+              />
+            </div>
+            <div className="border-t flex-1 px-8 overflow-y-auto">
+              <pre>{output}</pre>
+            </div>
           </div>
-          <div className="border-t flex-1 px-8 overflow-y-auto">
-            <pre>{output}</pre>
+        ) : (
+          <div className="flex-1 tldraw__editor">
+            <Tldraw store={store} inferDarkMode={currentTheme === "dark"} />
           </div>
-        </div>
+        )}
         <Tabs defaultValue="statement" className="flex-1 border-l">
           <div className="p-4">
             <TabsList className="">
